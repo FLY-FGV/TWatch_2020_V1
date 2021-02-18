@@ -1,5 +1,5 @@
 # TWatch_2020_V1
-my c project for esp32 based on ESP-IDF (v 4.1.1-drity)
+my project for ttgo-watch2020-v1 based on ESP-IDF (v 4.1.1-drity)
 # TWatch_UFO94
 Simple watch based on T-Watch TTGO 2020 V1.
 The screen displays the clock, date, battery level and current consumption.
