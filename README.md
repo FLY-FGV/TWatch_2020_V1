@@ -10,22 +10,38 @@ Screen watch:
 ![Screen watch](https://github.com/FLY-FGV/TWatch_2020_V1/blob/main/img/4.png)
 Configure from termite:
 
-![Screen term]https://github.com/FLY-FGV/TWatch_2020_V1/blob/main/img/termite.png
+![Screen term](https://github.com/FLY-FGV/TWatch_2020_V1/blob/main/img/termite.png)
 
 Files in project:
+
 spi_master_example_main.c - main cycle, init spi etc
+
 axp202.c - auxiliary functions for working with clock PCF8563 and power AXP202
+
 ft6336.c - auxiliary functions for working with touchscreen
+
 uearth.c - earth project & draw function.
 
-1) in setup call earth_unpack() once.  This function prepare buffer's and unpack coordinates from lat,lon to 3D - x,y,z.
+WORLD.DAT - globe geo data file from X-COM: UFO Defense
+
+1) in setup call earth_unpack() once.  This function prepare internal buffer's and unpack coordinates from lat,lon to 3D - x,y,z.
+
 2) in main cycle:
-call updateP_setnewpointview(lat,lon) to set view point earth
-call set_sunA(Azimuth,Height) to set vector of sun light
-call setRearth(Radius) to change or set new radius of earth
+
+call updateP_setnewpointview(lat in radian,lon in radian) to set view point earth
+
+call set_sunA(Azimuth in rad,Height in rad) to set vector of sun light
+
+call setRearth(Radius in pix) to change or set new radius of earth
+
 call earth_proj_to_scr() to project earth to internal buffer
-if need apply sun light call apply_sun()
+
+if need apply sun light call apply_sun() to calculate light
+
 in cycle writes to screen call uint16_t earth_getcolor(int16_t x,int16_t y) to get color codes of rendered image.
 
+Most computes in earth.c make to fixed point. Base projection matrix is 1024. Power of 2 base 3D coodinates earth polygones defined by UFO_FIX_POINT_WDT.
+WORLD.DAT describes only ground. Sea and ocean draw before as sphere witch solid color. 
+Codes screen orientation:
 
-
+![ORCODES](https://github.com/FLY-FGV/TWatch_2020_V1/blob/main/img/scr_orientation.png)
