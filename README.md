@@ -1,5 +1,5 @@
 # TWatch_2020_V1
-my c project for esp32 based on ESP-IDF
+my c project for esp32 based on ESP-IDF (v 4.1.1-drity)
 # TWatch_UFO94
 Simple watch based on T-Watch TTGO 2020 V1.
 The screen displays the clock, date, battery level and current consumption.
@@ -44,4 +44,5 @@ Most computes in earth.c make to fixed point. Base projection matrix is 1024. Po
 WORLD.DAT describes only ground. Sea and ocean draw before as sphere witch solid color. 
 Codes screen orientation:
 
-![ORCODES](https://github.com/FLY-FGV/TWatch_2020_V1/blob/main/img/scr_orientation.png)
+Screen orientation code:
+https://github.com/FLY-FGV/TWatch_2020_V1/blob/main/img/scr_orientation.png
