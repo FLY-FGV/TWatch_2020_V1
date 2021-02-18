@@ -6,9 +6,11 @@ The screen displays the clock, date, battery level and current consumption.
 A globe from the game X-COM: UFO Defense (file world.dat: https://www.ufopaedia.org/index.php/WORLD.DAT) is drawn in the background. Globe lighting is calculated based on the current time and date. You can rotate the ball with the touchscreen. After 20 seconds of inactivity (no touching the touchscreen), the watch goes into sleep mode. Entering / exiting sleep mode - pressing the button.
 Configuration (setting date, time, backlight level, etc.) is performed via the PC console.
 Screen watch:
+
 ![Screen watch](https://github.com/FLY-FGV/TWatch_2020_V1/blob/main/img/4.png)
 Configure from termite:
-https://github.com/FLY-FGV/TWatch_2020_V1/blob/main/img/termite.png
+
+![Screen term]https://github.com/FLY-FGV/TWatch_2020_V1/blob/main/img/termite.png
 
 Files in project:
 spi_master_example_main.c - main cycle, init spi etc
