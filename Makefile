@@ -3,7 +3,7 @@
 # project subdirectory.
 #
 
-PROJECT_NAME := spi_master
+PROJECT_NAME := UFO_Watch
 
 include $(IDF_PATH)/make/project.mk
 
