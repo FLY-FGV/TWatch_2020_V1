@@ -21,10 +21,6 @@
 #define U11_R 95
 #define U11_G 190
 #define U11_B 12
-//color 15 - ocean on earth
-#define U15_R 0
-#define U15_G 0
-#define U15_B 80
 //color 1 -farm
 #define U1_R 0
 #define U1_G 255
@@ -75,8 +71,12 @@
 #define U14_B 0
 //15-ocean
 #define OCEAN_CODE 15
+//color 15 - ocean on earth
+#define U15_R 0
+#define U15_G 0
+#define U15_B 255
 //
-DRAM_ATTR uint8_t earth_red_code[16]=  {U0_R,U1_R,U2_R,U3_R, U4_R,U5_R,U6_R,U7_R, U8_R,U9_R,U10_R,U11_R, U12_R,U13_R,U14_R,U15_R};
-DRAM_ATTR uint8_t earth_blue_code[16]= {U0_B,U1_B,U2_B,U3_B, U4_B,U5_B,U6_B,U7_B, U8_B,U9_B,U10_B,U11_B, U12_B,U13_G,U14_B,U15_B};
-DRAM_ATTR uint8_t earth_green_code[16]={U0_G,U1_G,U2_G,U3_G, U4_G,U5_G,U6_G,U7_G, U8_G,U9_G,U10_G,U11_G, U12_G,U13_B,U14_G,U15_G};
+extern uint8_t earth_red_code[16];
+extern uint8_t earth_blue_code[16];
+extern uint8_t earth_green_code[16];
 #endif

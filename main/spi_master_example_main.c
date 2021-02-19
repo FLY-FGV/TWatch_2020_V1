@@ -24,6 +24,7 @@
 #include <time.h>
 #include "watch_state.h"
 #include "esp_sleep.h"
+#include "state.h"
 
 #define LCD_HOST    HSPI_HOST
 #define DMA_CHAN    2
@@ -570,6 +571,7 @@ static void console_arg(void *param)
 		if (s[0]=='K' && s[1]=='=')
 		{
 			main_watch_state.KLight=atol(s+2);
+			earth_setKL(main_watch_state.KLight);
 			printf("setted new KL=%d\n",main_watch_state.KLight);
 			write_nvs();
 			continue;
@@ -679,7 +681,7 @@ void app_main(void)
 	main_watch_state.lon=-((60.0+(36.0/60.0))*M_PI)/180.0;
 	main_watch_state.lat=-((56.0+(51.0/60.0))*M_PI)/180.0;
 	main_watch_state.screenorientation=0;
-	main_watch_state.KLight=29;
+	main_watch_state.KLight=10;
 	//read setting's:
 	read_nvs();
 	//install gpio isr service
@@ -697,7 +699,8 @@ void app_main(void)
     //Initialize the LCD
     lcd_init(spi);
 	//
-	earth_unpack();
+	earth_init();
+	earth_setKL(main_watch_state.KLight);
     //
     xTaskCreate(display_earth,"spi_tsk",4096,spi,3,NULL);
     vTaskDelay(100 / portTICK_RATE_MS);
