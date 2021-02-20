@@ -1,3 +1,14 @@
-menu "Example Configuration"
+menu "UFO Watch Configuration"
+    choice DAYOFWEEK_TYPE
+        prompt "Gliph day of week type"
+        default DAYOFWEEK_TYPE_RUS
+        help
+            The type of gliph day of week on screen watch.
+
+        config DAYOFWEEK_TYPE_RUS
+            bool "Rus gliph"
+        config DAYOFWEEK_TYPE_EN
+            bool "En gliph"
+    endchoice
 
 endmenu
