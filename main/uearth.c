@@ -359,7 +359,6 @@ IRAM_ATTR void earth_apply_sun()
 			if (P>0)
 			{
 				uint32_t Adr=OFFSET_X+ix+(iy+OFFSET_Y)*WIDTH_EARTH;
-				//ptrscr[Adr]=ptrscr[Adr]|((P>>2)&0xF0);
 				lightscr[Adr]=P>>2;//8bit's!
 			};
 			if (iy>0)
@@ -368,7 +367,6 @@ IRAM_ATTR void earth_apply_sun()
 				if (P>0)
 				{
 					uint32_t Adr=OFFSET_X+ix+(-iy+OFFSET_Y)*WIDTH_EARTH;
-					//ptrscr[Adr]=ptrscr[Adr]|((P>>2)&0xF0);
 					lightscr[Adr]=P>>2;//8bit's!
 				}
 			}
@@ -378,7 +376,6 @@ IRAM_ATTR void earth_apply_sun()
 				if (P>0)
 				{
 					uint32_t Adr=OFFSET_X-ix+(iy+OFFSET_Y)*WIDTH_EARTH;
-					//ptrscr[Adr]=ptrscr[Adr]|((P>>2)&0xF0);
 					lightscr[Adr]=P>>2;//8bit's!
 				};
 				if (iy>0)
@@ -387,7 +384,6 @@ IRAM_ATTR void earth_apply_sun()
 					if (P>0)
 					{
 						uint32_t Adr=OFFSET_X-ix+(-iy+OFFSET_Y)*WIDTH_EARTH;
-						//ptrscr[Adr]=ptrscr[Adr]|((P>>2)&0xF0);
 						lightscr[Adr]=P>>2;//8bit's!
 					}
 				};
