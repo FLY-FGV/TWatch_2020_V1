@@ -14,6 +14,6 @@ void earth_setKL(int16_t newKL);
 void setRearth(int32_t newR);
 int  getRearth();
 //
-void updateP_setnewpointview(float lat,float lon);
-void set_sunA(float Az,float H);
+void earth_setnewpointview(float lat,float lon);
+void earth_set_sunA(float Az,float H);
 #endif

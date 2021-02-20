@@ -162,7 +162,7 @@ void console_arg(void *param)
 		if (s[0]=='l' && s[1]=='a' && s[2]=='t' && s[3]=='=')
 		{
 			main_watch_state.lat=-(M_PI/180.0)*atof(s+4);
-			updateP_setnewpointview(main_watch_state.lat,main_watch_state.lon);
+			earth_setnewpointview(main_watch_state.lat,main_watch_state.lon);
 			uint32_t msg=MAKE_MSG0(UPDATE_SCR);
 			xQueueSend(main_watch_state.main_message, &msg, 0);
 			continue;
@@ -170,7 +170,7 @@ void console_arg(void *param)
 		if (s[0]=='l' && s[1]=='o' && s[2]=='n' && s[3]=='=')
 		{
 			main_watch_state.lon=-(M_PI/180.0)*atof(s+4);
-			updateP_setnewpointview(main_watch_state.lat,main_watch_state.lon);
+			earth_setnewpointview(main_watch_state.lat,main_watch_state.lon);
 			uint32_t msg=MAKE_MSG0(UPDATE_SCR);
 			xQueueSend(main_watch_state.main_message, &msg, 0);
 			continue;

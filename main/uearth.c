@@ -273,7 +273,7 @@ IRAM_ATTR void draw_sph(int32_t R)
 	}
 }
 
-IRAM_ATTR void set_sunA(float Az,float H)
+IRAM_ATTR void earth_set_sunA(float Az,float H)
 {
 	sunV[2]=1024*sin(H);
 	sunV[1]=1024*cos(Az)*cos(H);
@@ -441,7 +441,7 @@ void setRearth(int32_t newR)
 }
 int  getRearth() {return Rearth;};
 //
-void updateP_setnewpointview(float lat,float lon)
+void earth_setnewpointview(float lat,float lon)
 {
 	float clat=cos(lat);
 	float slat=sin(lat);

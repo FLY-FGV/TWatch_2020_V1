@@ -307,7 +307,7 @@ static void display_earth(void *param)
 	//main cycle:
 	uint32_t msg;
 	int16_t X=0,Y=0;
-	updateP_setnewpointview(main_watch_state.lat,main_watch_state.lon);
+	earth_setnewpointview(main_watch_state.lat,main_watch_state.lon);
 	main_watch_state.TimeOutCounter=0;
 	while(1)
 	{
@@ -372,7 +372,7 @@ static void display_earth(void *param)
 			else
 				main_watch_state.lon=main_watch_state.lon-(dx*M_PI/240.0);
 			main_watch_state.lat=main_watch_state.lat+(dy*M_PI/240.0);
-			updateP_setnewpointview(main_watch_state.lat,main_watch_state.lon);
+			earth_setnewpointview(main_watch_state.lat,main_watch_state.lon);
 			X=GET_ARG0(msg);
 			Y=GET_ARG1(msg);
 		}
@@ -396,7 +396,7 @@ static void display_earth(void *param)
 		//расчет угла поворота земли
 		float angle_sunAz=M_PI*1.5-M_PI*2.0*dr;
 		//задаем вектор падения солнечных лучей на землю:
-		set_sunA(angle_sunAz,angle_sunH);
+		earth_set_sunA(angle_sunAz,angle_sunH);
 		//опрос и инициализация данных по батарее
 		int16_t dcur=axp202_getdischargecurrent();
 		int16_t ccur=axp202_getchargecurrent();
