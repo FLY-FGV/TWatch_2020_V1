@@ -345,7 +345,7 @@ void draw_state(void *ptrstate)
 	//draw status:
 	draw_date(-117,-117,p->day,p->mnt,p->year);
 	draw_time(20,-117,H,M,s);
-	draw_dow(-120+(2*7)*sizeS,-117+11*sizeS,p->dayofweek);
+	draw_dow(-120+(2*7)*sizeS,-117+13*sizeS,p->dayofweek);
 	draw_current(-120,120-sizeS*11-4,p->current);
 	drawvoltage(120-sizeS*8*5,120-sizeS*11-4,p->BatV);
 };

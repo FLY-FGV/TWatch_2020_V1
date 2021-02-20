@@ -301,10 +301,12 @@ static void display_earth(void *param)
             //touch line[sending_line]; the SPI sending process is still reading from that.
     }
 	//
-	//
 	send_line_finish(spi);
 	sending_line=-1;
     calc_line=0;
+	//
+	earth_init();
+	earth_setKL(main_watch_state.KLight);
 	//
 	setbright(main_watch_state.brg);
 	//main cycle:
@@ -319,6 +321,11 @@ static void display_earth(void *param)
 			vTaskDelay(1);
 			continue;
 		}
+		if (GET_MSG(msg)==UPDATE_SCR)
+		{
+			if (xQueuePeek(main_watch_state.main_message, &msg, 0)==pdTRUE)
+				xQueueReceive(main_watch_state.main_message, &msg, 0);
+		};
 		//get msg....
 		if (GET_MSG(msg)==GO_SLEEP)
 		{
@@ -599,12 +606,16 @@ static void console_arg(void *param)
 		{
 			main_watch_state.lat=-(M_PI/180.0)*atof(s+4);
 			updateP_setnewpointview(main_watch_state.lat,main_watch_state.lon);
+			uint32_t msg=MAKE_MSG0(UPDATE_SCR);
+			xQueueSend(main_watch_state.main_message, &msg, 0);
 			continue;
 		}
 		if (s[0]=='l' && s[1]=='o' && s[2]=='n' && s[3]=='=')
 		{
 			main_watch_state.lon=-(M_PI/180.0)*atof(s+4);
 			updateP_setnewpointview(main_watch_state.lat,main_watch_state.lon);
+			uint32_t msg=MAKE_MSG0(UPDATE_SCR);
+			xQueueSend(main_watch_state.main_message, &msg, 0);
 			continue;
 		}
 		if (strcmp(s,"prn")==0)
@@ -694,6 +705,7 @@ void app_main(void)
     gpio_set_direction(PIN_NUM_DC, GPIO_MODE_DEF_OUTPUT);
 	//set default value:
 	main_watch_state.main_message=xQueueCreate(10, sizeof(uint32_t));
+	main_watch_state.main_event_bits=xEventGroupCreate();
 	setRearth(90);
 	main_watch_state.TimeZone=5;
 	main_watch_state.brg=127;
@@ -717,12 +729,9 @@ void app_main(void)
     ESP_ERROR_CHECK(ret);
     //Initialize the LCD
     lcd_init(spi);
-	//
-	earth_init();
-	earth_setKL(main_watch_state.KLight);
     //
     xTaskCreate(display_earth,"spi_tsk",4096,spi,3,NULL);
-    vTaskDelay(100 / portTICK_RATE_MS);
+    //vTaskDelay(100 / portTICK_RATE_MS);
 	xTaskCreate(console_arg,"console",4096,NULL,3,NULL);
 	//
 	TimerHandle_t xTimer = xTimerCreate("Timer",1000/portTICK_RATE_MS,pdTRUE,( void * ) 0,vTimerCallback);

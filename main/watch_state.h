@@ -3,6 +3,7 @@
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/queue.h"
+#include "freertos/event_groups.h"
 
 struct main_watch_t
 {
@@ -26,6 +27,7 @@ struct main_watch_t
 	uint16_t TimeOutCounter;//time out counter
 	//
 	QueueHandle_t main_message;//main message queque
+	EventGroupHandle_t main_event_bits;
 	//
 	int16_t KLight;
 	uint8_t in_sleep;//1=from sleep, =0 - go to sleep
@@ -43,6 +45,8 @@ enum msg_type
 	SEND_SCR=5,
 	UPDATE_SCR=6
 };
+
+#define BIT_EVENT_HAVE_XY 1
 
 #define MAKE_MSG0(A)     ((A<<24))
 #define GET_MSG(A)  ((A>>24)&0xFF) 

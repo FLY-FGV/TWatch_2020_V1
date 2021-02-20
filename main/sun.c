@@ -17,5 +17,6 @@ float getsun_H(uint8_t d,uint8_t m,uint16_t y,float dayrem)
 	//numday=numday+main_watch_state.day-173;
 	//return=-(23.44*M_PI/180.0)*cos(numday*M_PI*2.0/365.0);
 	numday=numday+d+dayrem;
-	return asin((M_PI/180.0)*(0.39779*cos((M_PI/180.0)*0.98565*(numday+10.0))+1.914*sin((M_PI/180.0)*0.98565*(numday-2.0))));
+	float ac=0.98565*(numday+10.0)+1.914*sin((M_PI/180.0)*0.98565*(numday-2.0));
+	return asin( 0.39779*cos((M_PI/180.0)*ac) );
 }
