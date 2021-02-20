@@ -123,12 +123,12 @@ static void IRAM_ATTR touch_isr_handler(void* arg)
 
 extern struct main_watch_t main_watch_state;
 
-static int curX=0;
-static int curY=0;
-static int down=0;
-int getlastX(){return curX;};
-int getlastY(){return curY;};
-int getdown(){return down;};
+//static int curX=0;
+//static int curY=0;
+//static int down=0;
+//int getlastX(){return curX;};
+//int getlastY(){return curY;};
+//int getdown(){return down;};
 
 static void touch_task(void* arg)
 {
@@ -165,21 +165,21 @@ static void touch_task(void* arg)
 					//ptX=newptX;ptY=newptY;
 					//state=0;
 					msg = (POINT_DOWN<<24)|(newptX<<8)|(newptY);
-					curX=newptX;
-					curY=newptY;
-					down=1;
+					//curX=newptX;
+					//curY=newptY;
+					//down=1;
 					xQueueSend(main_watch_state.main_message, &msg, 0);
 					break;
 				case 1://lift up
 					//state=-1;
 					msg = (POINT_UP<<24)|(newptX<<8)|(newptY);
-					down=0;
+					//down=0;
 					xQueueSend(main_watch_state.main_message, &msg, 0);
 					break;
 				case 2://contact-move
-					curX=newptX;
-					curY=newptY;
-					down=1;
+					//curX=newptX;
+					//curY=newptY;
+					//down=1;
 					msg = (POINT_MOVE<<24)|(newptX<<8)|(newptY);
 					xQueueSend(main_watch_state.main_message, &msg, 0);
 				/*

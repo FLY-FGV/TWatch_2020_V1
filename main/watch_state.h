@@ -40,7 +40,8 @@ enum msg_type
 	POINT_UP=2,
 	POINT_MOVE=3,
 	GO_SLEEP=4,
-	SEND_SCR=5
+	SEND_SCR=5,
+	UPDATE_SCR=6
 };
 
 #define MAKE_MSG0(A)     ((A<<24))

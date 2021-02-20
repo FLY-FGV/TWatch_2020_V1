@@ -98,14 +98,14 @@ void earth_deinit()
 	free(lightscr);lightscr=NULL;
 }
 
-int16_t projectX(int16_t *XYZ_v)
+IRAM_ATTR int16_t projectX(int16_t *XYZ_v)
 {
 	int32_t r=XYZ_v[0]*Pmatrix[1][0]+XYZ_v[1]*Pmatrix[1][1]+XYZ_v[2]*Pmatrix[1][2];//10+16(max)=26
 	r=r>>10;//
 	return (r*Rearth)>>UFO_FIX_POINT_WDT;
 }
 
-int16_t projectY(int16_t *XYZ_v)
+IRAM_ATTR int16_t projectY(int16_t *XYZ_v)
 {
 	int32_t r=(XYZ_v[0]*Pmatrix[2][0]+XYZ_v[1]*Pmatrix[2][1]+XYZ_v[2]*Pmatrix[2][2]);
 	r=r>>10;
@@ -113,31 +113,31 @@ int16_t projectY(int16_t *XYZ_v)
 
 }
 
-int32_t projectVisible(int16_t *XYZ_v)
+IRAM_ATTR int32_t projectVisible(int16_t *XYZ_v)
 {
 	return (XYZ_v[0]*Pmatrix[0][0]+XYZ_v[1]*Pmatrix[0][1]+XYZ_v[2]*Pmatrix[0][2]);//max: 10+16=26 bit
 }
 
 #define swap_i16(a,b) {int16_t tmp;tmp=a;a=b;b=tmp;}
 
-int16_t max3i(int16_t m1, int16_t m2, int16_t m3)
+IRAM_ATTR int16_t max3i(int16_t m1, int16_t m2, int16_t m3)
 {
 	if (m2 > m1) m1 = m2;
 	if (m3 > m1) m1 = m3;
 	return m1;
 }
-int16_t min3i(int16_t m1, int16_t m2, int16_t m3)
+IRAM_ATTR int16_t min3i(int16_t m1, int16_t m2, int16_t m3)
 {
 	if (m2 < m1) m1 = m2;
 	if (m3 < m1) m1 = m3;
 	return m1;
 }
-int16_t max2i(int16_t m1, int16_t m2)
+IRAM_ATTR int16_t max2i(int16_t m1, int16_t m2)
 {
 	if (m2 > m1) m1 = m2;
 	return m1;
 }
-int16_t min2i(int16_t m1, int16_t m2)
+IRAM_ATTR int16_t min2i(int16_t m1, int16_t m2)
 {
 	if (m2 < m1) m1 = m2;
 	return m1;
@@ -145,7 +145,7 @@ int16_t min2i(int16_t m1, int16_t m2)
 
 static inline int16_t clipX(int16_t x){if (x<=MIN_EARTH_X) return MIN_EARTH_X;if (x>=MAX_EARTH_X) return MAX_EARTH_X;return x;};
 static inline int16_t clipY(int16_t y){if (y<=MIN_EARTH_Y) return MIN_EARTH_Y;if (y>=MAX_EARTH_Y) return MAX_EARTH_Y;return y;};
-void set_line(int16_t y, int16_t xb, int16_t xe, uint8_t color)
+IRAM_ATTR void set_line(int16_t y, int16_t xb, int16_t xe, uint8_t color)
 {
 	if (xb<MIN_EARTH_X && xe<MIN_EARTH_X) return;
 	if (xb>MAX_EARTH_X && xe>MAX_EARTH_X) return;
@@ -154,7 +154,7 @@ void set_line(int16_t y, int16_t xb, int16_t xe, uint8_t color)
 	memset(&ptrscr[xb+OFFSET_X+(y+OFFSET_Y)*WIDTH_EARTH],color,xe-xb+1);
 }
 
-void draw_triang(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t x3, int16_t y3,uint8_t color)
+IRAM_ATTR void draw_triang(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t x3, int16_t y3,uint8_t color)
 {
 	if (y1 == y2 && y1 == y3)
 	{
@@ -201,7 +201,7 @@ void draw_triang(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t x3, int
 	}
 }
 
-void project_poly3(int ip)
+IRAM_ATTR void project_poly3(int ip)
 {
 	int i=ip<<2;
 	//
@@ -218,7 +218,7 @@ void project_poly3(int ip)
 	draw_triang(x1,y1,x2,y2,x3,y3,color[ip]&0xf);
 };
 
-void project_poly4(int ip)
+IRAM_ATTR void project_poly4(int ip)
 {
 	int i=ip<<2;
 	//
@@ -240,7 +240,7 @@ void project_poly4(int ip)
 	if (vis134>=0) draw_triang(x1,y1,x3,y3,x4,y4,color[ip]&0xf);
 };
 
-void draw_sph(int32_t R)
+IRAM_ATTR void draw_sph(int32_t R)
 {
 	int32_t delta = 1 - 2 * R;
 	int32_t error = 0;
@@ -273,14 +273,14 @@ void draw_sph(int32_t R)
 	}
 }
 
-void set_sunA(float Az,float H)
+IRAM_ATTR void set_sunA(float Az,float H)
 {
 	sunV[2]=1024*sin(H);
 	sunV[1]=1024*cos(Az)*cos(H);
 	sunV[0]=1024*sin(Az)*cos(H);
 };
 //
-uint16_t sqrt_newton(uint32_t x)  // Hardware algorithm [GLS]
+IRAM_ATTR uint16_t sqrt_newton(uint32_t x)  // Hardware algorithm [GLS]
 {
    uint32_t m, y, b;
    uint16_t m16, y16, b16, x16;

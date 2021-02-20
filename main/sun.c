@@ -8,7 +8,7 @@ float getsun_D(int8_t H,uint8_t M,uint8_t S)
 	return (H*3600.0+M*60.0+S)/(3600.0*24.0);
 }
 
-float getsun_Az(uint8_t d,uint8_t m,uint16_t y,float dayrem)
+float getsun_H(uint8_t d,uint8_t m,uint16_t y,float dayrem)
 {
 	uint8_t DMM[12]={31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 	float numday=0;

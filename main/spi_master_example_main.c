@@ -10,6 +10,7 @@
 #include <string.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "freertos/timers.h"
 #include "esp_system.h"
 #include "driver/spi_master.h"
 #include "driver/gpio.h"
@@ -25,6 +26,7 @@
 #include "watch_state.h"
 #include "esp_sleep.h"
 #include "state.h"
+#include "sun.h"
 
 #define LCD_HOST    HSPI_HOST
 #define DMA_CHAN    2
@@ -237,6 +239,37 @@ static void setbright(uint8_t brg)
 	ledc_update_duty(LEDC_HIGH_SPEED_MODE,0);
 }
 
+//1sec timer callback
+static void vTimerCallback( TimerHandle_t xTimer )
+{
+	uint32_t msg=MAKE_MSG0(UPDATE_SCR);
+	xQueueSend(main_watch_state.main_message, &msg, 0);
+	if ((axp202_getpowerstatus()&0x30)!=0x30)
+		main_watch_state.TimeOutCounter++;
+	else
+		main_watch_state.TimeOutCounter=0;
+	if (main_watch_state.TimeOutCounter>=20)
+	{
+		main_watch_state.in_sleep=1;
+		msg = MAKE_MSG0(GO_SLEEP);
+		xQueueSend(main_watch_state.main_message, &msg, 0);
+		main_watch_state.TimeOutCounter=0;
+	}
+}
+
+static uint32_t getlastmovemsg(uint32_t m)
+{
+	uint32_t msg;
+	if (xQueuePeek(main_watch_state.main_message, &msg, 0)==pdFALSE)
+		return m;
+	while(GET_MSG(msg)==POINT_MOVE)
+	{
+		xQueueReceive(main_watch_state.main_message, &m, 0);
+		if (xQueuePeek(main_watch_state.main_message, &msg, 0)==pdFALSE) break;
+	};
+	return m;
+}
+
 static void display_earth(void *param)
 {
 	spi_device_handle_t spi=param;
@@ -276,79 +309,71 @@ static void display_earth(void *param)
 	setbright(main_watch_state.brg);
 	//main cycle:
 	uint32_t msg;
-	int16_t X=0,Y=0,DW=0;
+	int16_t X=0,Y=0;
 	updateP_setnewpointview(main_watch_state.lat,main_watch_state.lon);
 	main_watch_state.TimeOutCounter=0;
 	while(1)
 	{
-		if(xQueueReceive(main_watch_state.main_message, &msg, 100/portTICK_RATE_MS)==pdFALSE)
+		if(xQueueReceive(main_watch_state.main_message, &msg, 0)==pdFALSE)
 		{
-			if ((axp202_getpowerstatus()&0x30)!=0x30)
-				main_watch_state.TimeOutCounter++;
-			else
-				main_watch_state.TimeOutCounter=0;
-			if (main_watch_state.TimeOutCounter>100)//100ms+100ms = 0.2s*200 = 20sec
-			{
-				main_watch_state.in_sleep=1;
-				msg = GO_SLEEP<<24;
-				xQueueSend(main_watch_state.main_message, &msg, 0);
-				continue;
-			};
+			vTaskDelay(1);
+			continue;
 		}
-		else
+		//get msg....
+		if (GET_MSG(msg)==GO_SLEEP)
 		{
+			//turn off backlight
+			setbright(0);
+			disable_all_ldo();
+			//go sleep screen
+			vTaskDelay(20);
+			lcd_cmd(spi,0x10);
+			//go sleep
+			esp_light_sleep_start();
 			main_watch_state.TimeOutCounter=0;
-			//time out reset! get msg....
-			if (GET_MSG(msg)==GO_SLEEP)
-			{
-				//turn off backlight
-				setbright(0);
-				disable_all_ldo();
-				//go sleep screen
-				vTaskDelay(20);
-				lcd_cmd(spi,0x10);
-				//go sleep
-				esp_light_sleep_start();
-				//on screen
-				lcd_cmd(spi,0x11);
-				vTaskDelay(1);
-				//turn on backlight
-				enable_ldo2();
-				setbright(main_watch_state.brg);
-			};
-			if (GET_MSG(msg)==SEND_SCR)
-			{
-				printf("image:\n");
-				for (int iy=0;iy<240;iy++)
-				{
-					for (int ix=0;ix<240;ix++)
-						printf("%4.4X",earth_getcolor(ix,iy));
-					printf("\n");
-				}
-				printf("end img\n");
-			};
+			//on screen
+			lcd_cmd(spi,0x11);
+			vTaskDelay(1);
+			//turn on backlight
+			enable_ldo2();
+			setbright(main_watch_state.brg);
 		};
-		if (getdown())
+		if (GET_MSG(msg)==SEND_SCR)
 		{
-			if (DW==1)
+			printf("image:\n");
+			for (int iy=0;iy<240;iy++)
 			{
-				if (cos(main_watch_state.lat)>=0.0)
-					main_watch_state.lon=main_watch_state.lon-((X-getlastX())*M_PI/240.0);
-				else
-					main_watch_state.lon=main_watch_state.lon+((X-getlastX())*M_PI/240.0);
-				main_watch_state.lat=main_watch_state.lat-((Y-getlastY())*M_PI/240.0);
-				updateP_setnewpointview(main_watch_state.lat,main_watch_state.lon);
-				X=getlastX();
-				Y=getlastY();
+				for (int ix=0;ix<240;ix++)
+					printf("%4.4X",earth_getcolor(ix,iy));
+				printf("\n");
 			}
+			printf("end img\n");
+			main_watch_state.TimeOutCounter=0;
+		};
+		if (GET_MSG(msg)==POINT_DOWN)
+		{
+			X=GET_ARG0(msg);
+			Y=GET_ARG1(msg);
+			main_watch_state.TimeOutCounter=0;
+			continue;
+		};
+		if (GET_MSG(msg)==POINT_MOVE)
+		{
+			//have any other message
+			msg=getlastmovemsg(msg);
+			main_watch_state.TimeOutCounter=0;
+			int16_t dx=GET_ARG0(msg)-X;
+			int16_t dy=GET_ARG1(msg)-Y;
+			if (dx==0 && dy==0) continue;
+			if (cos(main_watch_state.lat)>=0.0)
+				main_watch_state.lon=main_watch_state.lon+(dx*M_PI/240.0);
 			else
-			{
-				DW=1;
-				X=getlastX();
-				Y=getlastY();
-			};
+				main_watch_state.lon=main_watch_state.lon-(dx*M_PI/240.0);
+			main_watch_state.lat=main_watch_state.lat+(dy*M_PI/240.0);
+			updateP_setnewpointview(main_watch_state.lat,main_watch_state.lon);
+			X=GET_ARG0(msg);
+			Y=GET_ARG1(msg);
 		}
-		else {DW=0;};
 		//get data from sensor's:
 		{
 			uint8_t hour_min_sec[3];
@@ -362,20 +387,14 @@ static void display_earth(void *param)
 			main_watch_state.year =day_mnt_yar[2];
 			main_watch_state.dayofweek=get_DayOfWeek();
 		}
+		//расчет дробной части дня по гринвичу
+		float dr=getsun_D(main_watch_state.hour-main_watch_state.TimeZone,main_watch_state.minute,main_watch_state.sec);
 		//рассчет угола падения солнечных лучей
-		float angle_sun=0;
-		{
-			uint8_t DMM[12]={31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-			int16_t numday=0;
-			for (int i=0;i<(main_watch_state.mnt-1);i++)
-				numday=numday+DMM[i];
-			numday=numday+main_watch_state.day-173;
-			angle_sun=-(23.44*M_PI/180.0)*cos(numday*M_PI*2.0/365.0);
-		};
+		float angle_sunH=getsun_H(main_watch_state.day,main_watch_state.mnt,main_watch_state.year,dr);
 		//расчет угла поворота земли
-		float angle_rot=M_PI*1.5-(M_PI*2.0*((main_watch_state.hour-main_watch_state.TimeZone)*3600.0+main_watch_state.minute*60.0+main_watch_state.sec))/(3600.0*24.0);
+		float angle_sunAz=M_PI*1.5-M_PI*2.0*dr;
 		//задаем вектор падения солнечных лучей на землю:
-		set_sunA(angle_rot,angle_sun);
+		set_sunA(angle_sunAz,angle_sunH);
 		//опрос и инициализация данных по батарее
 		int16_t dcur=axp202_getdischargecurrent();
 		int16_t ccur=axp202_getchargecurrent();
@@ -674,7 +693,7 @@ void app_main(void)
 	ledc_timer_config(&ledc_timer);
     gpio_set_direction(PIN_NUM_DC, GPIO_MODE_DEF_OUTPUT);
 	//set default value:
-		main_watch_state.main_message=xQueueCreate(10, sizeof(uint32_t));
+	main_watch_state.main_message=xQueueCreate(10, sizeof(uint32_t));
 	setRearth(90);
 	main_watch_state.TimeZone=5;
 	main_watch_state.brg=127;
@@ -705,4 +724,7 @@ void app_main(void)
     xTaskCreate(display_earth,"spi_tsk",4096,spi,3,NULL);
     vTaskDelay(100 / portTICK_RATE_MS);
 	xTaskCreate(console_arg,"console",4096,NULL,3,NULL);
+	//
+	TimerHandle_t xTimer = xTimerCreate("Timer",1000/portTICK_RATE_MS,pdTRUE,( void * ) 0,vTimerCallback);
+	xTimerStart( xTimer, 0 );
 }
