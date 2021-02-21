@@ -226,7 +226,7 @@ void init_axp202()
 	ESP_ERROR_CHECK(write_REG(AXP202ADDR,0x31,3));//set power off = 2.9V
 	ESP_ERROR_CHECK(write_REG(AXP202ADDR,0x40,0));//dis irq40
 	ESP_ERROR_CHECK(write_REG(AXP202ADDR,0x41,0));//dis irq41
-	ESP_ERROR_CHECK(write_REG(AXP202ADDR,0x42,3));//dis irq42. enable pek short+pek long
+	ESP_ERROR_CHECK(write_REG(AXP202ADDR,0x42,2));//dis irq42. enable only pek short
 	ESP_ERROR_CHECK(read_REG(AXP202ADDR,0x4A, &data));ESP_ERROR_CHECK(write_REG(AXP202ADDR,0x4A,data));//reset irq request from reg42
 	ESP_ERROR_CHECK(write_REG(AXP202ADDR,0x43,0));//dis irq43
 	//
