@@ -8,6 +8,7 @@ Configuration (setting date, time, backlight level, etc.) is performed via the P
 Screen watch:
 
 ![Screen watch](https://github.com/FLY-FGV/TWatch_2020_V1/blob/main/img/4.png)
+
 Configure from termite:
 
 ![Screen term](https://github.com/FLY-FGV/TWatch_2020_V1/blob/main/img/termite.png)
@@ -45,4 +46,5 @@ WORLD.DAT describes only ground. Sea and ocean draw before as sphere witch solid
 Codes screen orientation:
 
 Screen orientation code:
-https://github.com/FLY-FGV/TWatch_2020_V1/blob/main/img/scr_orientation.png
+
+![Screen term](https://github.com/FLY-FGV/TWatch_2020_V1/blob/main/img/scr_orientation.png)
