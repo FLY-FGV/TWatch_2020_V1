@@ -86,8 +86,8 @@ void console_arg(void *param)
 		}
 		if (s[0]=='R' && s[1]=='=')
 		{
-			setRearth(atol(s+2));
-			printf("Re=%d\n",getRearth());
+			earth_setRearth(atol(s+2));
+			printf("Re=%d\n",earth_getRearth());
 			continue;
 		}
 		if (s[0]=='T' && s[1]=='Z'  && s[2]=='=')

@@ -36,6 +36,7 @@ static int16_t sunV[3]={0,1024,0};//sun light beam vector
 static int32_t Rearth=100;//radius earth in pix
 static uint16_t earth_num_pt=0;//num point's
 static uint16_t earth_num_poly=0;//num poly
+static int16_t  K_light=1;//amig. coeff.
 //
 
 
@@ -412,7 +413,6 @@ IRAM_ATTR void earth_proj_to_scr()
 	}
 }
 
-static int16_t K_light=1;
 void earth_setKL(int16_t newKL)
 {
 	K_light=newKL;
@@ -430,7 +430,7 @@ IRAM_ATTR uint16_t earth_getcolor(int16_t x,int16_t y)
 	return RGB_G(R_o,G_o,B_o);
 }
 
-void setRearth(int32_t newR)
+void earth_setRearth(int32_t newR)
 {
 	if (newR>=2 && newR<=32767)
 		Rearth=newR;
@@ -439,7 +439,7 @@ void setRearth(int32_t newR)
 		printf("UFO Earth: bad radius (attempt set R=%d)!\n",newR);
 	}
 }
-int  getRearth() {return Rearth;};
+int32_t earth_getRearth() {return Rearth;};
 //
 void earth_setnewpointview(float lat,float lon)
 {

@@ -119,13 +119,11 @@ CONFIG_PARTITION_TABLE_MD5=y
 # end of Partition Table
 
 #
-# Example Configuration
+# UFO Watch Configuration
 #
-# CONFIG_LCD_TYPE_AUTO is not set
-CONFIG_LCD_TYPE_ST7789V=y
-# CONFIG_LCD_TYPE_ILI9341 is not set
-# CONFIG_LCD_OVERCLOCK is not set
-# end of Example Configuration
+CONFIG_DAYOFWEEK_TYPE_RUS=y
+# CONFIG_DAYOFWEEK_TYPE_EN is not set
+# end of UFO Watch Configuration
 
 #
 # Compiler options

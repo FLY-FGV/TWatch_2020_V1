@@ -11,8 +11,8 @@ void set_line(int16_t y, int16_t xb, int16_t xe, uint8_t color);
 void draw_triang(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t x3, int16_t y3,uint8_t color);
 //
 void earth_setKL(int16_t newKL);
-void setRearth(int32_t newR);
-int  getRearth();
+void    earth_setRearth(int32_t newR);
+int32_t earth_getRearth();
 //
 void earth_setnewpointview(float lat,float lon);
 void earth_set_sunA(float Az,float H);

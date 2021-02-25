@@ -63,7 +63,7 @@ typedef enum {
 
 struct main_watch_t main_watch_state;
 
-DRAM_ATTR static const lcd_init_cmd_t st_init_cmds2[]={
+DRAM_ATTR static const lcd_init_cmd_t st_init_cmds[]={
     {0x01, {0}, 0x80},   // software reset!
     {0x11, {0}, 0x80},   // Sleep out
     {0x13, {0}, 0x80},   // Normal display mode on = ST7789_NORON
@@ -148,7 +148,7 @@ void lcd_init(spi_device_handle_t spi)
     const lcd_init_cmd_t* lcd_init_cmds;
 	//init st7789v
     printf("LCD ST7789V initialization.\n");
-    lcd_init_cmds = st_init_cmds2;
+    lcd_init_cmds = st_init_cmds;
     //Send all the commands
     while (lcd_init_cmds[cmd].databytes!=0xff)
 	{
@@ -500,7 +500,7 @@ void app_main(void)
 	//set default value:
 	main_watch_state.main_message=xQueueCreate(10, sizeof(uint32_t));
 	main_watch_state.main_event_bits=xEventGroupCreate();
-	setRearth(90);
+	earth_setRearth(90);
 	main_watch_state.TimeZone=5;
 	main_watch_state.brg=127;
 	main_watch_state.lon=-((60.0+(36.0/60.0))*M_PI)/180.0;
